@@ -36,7 +36,7 @@ npm exec -c 'slidev "iot-slide.md" --port 3030'
 ###### 1.2.1 Quick setup (Window Powershell):
 
 - Install `NodeJS` and `NPM` (Node Package Manager).  
-- Run `./run.ps1`.
+- Run `./slide.ps1`.
 
 ###### 1.2.2 Setup from scratch:
 
