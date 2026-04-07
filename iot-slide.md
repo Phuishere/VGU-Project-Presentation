@@ -1,368 +1,735 @@
 ---
 theme: default
-title: IoT Soil Moisture
+title: "IoT Soil Moisture Detection — Digital Agriculture"
 info: |
-  Digital Agriculture - Advanced Soil Moisture Detection Pipeline
-class: text-center
+  Soil Moisture Detection with ESP32
+  Based on Microsoft IoT for Beginners — Lesson 6
+class: text-left
 drawings:
   persist: false
-transition: slide-up
+transition: slide-left
 mdc: true
+highlighter: shiki
+colorSchema: dark
+fonts:
+  sans: 'Inter'
+  mono: 'Fira Code'
 ---
 
-<div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-green-900 via-teal-900 to-black opacity-90 z-[-1]"></div>
+<div class="absolute inset-0 bg-gradient-to-br from-[#0a2e1a] via-[#0d3d1f] to-[#071a10]" />
 
-<div class="flex flex-col items-center justify-center h-full text-white">
-  <div class="i-carbon-iot text-6xl mb-4 text-green-400"></div>
-  <h1 class="text-6xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-green-300 to-emerald-500">
-    Digital Agriculture
-  </h1>
-  <h2 class="text-3xl font-light mt-2 text-gray-300">
-    Soil Moisture Inference Pipeline
-  </h2>
-  
-  <div class="mt-12 text-sm text-gray-400 tracking-widest uppercase">
-    Vietnamese German University (VGU) • IoT Project
-  </div>
+<div class="relative z-10 flex flex-col h-full justify-center pl-16">
+
+<div class="text-[#4ade80] text-sm font-mono tracking-widest uppercase mb-4">IoT for Beginners · Lesson 6</div>
+
+# <span class="text-white font-bold leading-tight">Soil Moisture</span><br><span class="text-[#4ade80]">Detection</span>
+
+<div class="mt-4 text-gray-300 text-lg max-w-lg">
+From raw voltage readings to calibrated soil data —<br>
+sensors, protocols & machine learning on ESP32.
 </div>
 
----
-layout: center
-class: text-left
----
-
-# 📡 Architectural Review: MQTT & IoT
-
-<div class="grid grid-cols-5 gap-4 mt-8 items-center">
-
-<div class="col-span-2 bg-gray-50 dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-lg">
-  <h3 class="text-xl font-bold text-blue-500 mb-2">Constrained Environments</h3>
-  <ul class="space-y-2 text-sm">
-    <v-clicks>
-      <li>Requires low-bandwidth, low-power protocols.</li>
-      <li><strong>MQTT</strong> relies on a lightweight Publish/Subscribe architecture.</li>
-      <li>Decouples the ESP32 (Publisher) from the Data Analytics Server (Subscriber).</li>
-    </v-clicks>
-  </ul>
-</div>
-
-<div class="col-span-3">
-  <div class="relative w-full h-64 bg-gray-100 dark:bg-gray-900 rounded-xl border border-dashed border-gray-400 flex items-center justify-center overflow-hidden">
-    <v-switch>
-      <template #1>
-        <div class="text-center transition-all duration-500">
-          <div class="i-carbon-microcontroller text-4xl text-gray-500 mx-auto"></div>
-          <p class="mt-2 font-mono text-sm text-gray-500">ESP32 Node</p>
-        </div>
-      </template>
-      <template #2>
-        <div class="flex items-center gap-8 transition-all duration-500">
-          <div class="text-center">
-            <div class="i-carbon-microcontroller text-4xl text-blue-500 mx-auto"></div>
-            <p class="mt-2 font-mono text-sm">Publish: temp/moisture</p>
-          </div>
-          <div class="i-carbon-arrow-right text-2xl animate-pulse"></div>
-          <div class="text-center">
-            <div class="i-carbon-ibm-mq text-5xl text-purple-500 mx-auto"></div>
-            <p class="mt-2 font-mono text-sm">MQTT Broker</p>
-          </div>
-        </div>
-      </template>
-      <template #3>
-        <div class="flex items-center gap-4 transition-all duration-500 scale-90">
-          <div class="text-center"><div class="i-carbon-microcontroller text-3xl text-blue-500 mx-auto"></div></div>
-          <div class="i-carbon-arrow-right"></div>
-          <div class="text-center"><div class="i-carbon-ibm-mq text-4xl text-purple-500 mx-auto"></div></div>
-          <div class="i-carbon-arrow-right"></div>
-          <div class="text-center">
-            <div class="i-carbon-chart-line text-3xl text-green-500 mx-auto"></div>
-            <p class="mt-2 font-mono text-xs">Sub: Backend / DB</p>
-          </div>
-        </div>
-      </template>
-    </v-switch>
-  </div>
+<div class="mt-8 flex gap-3 text-sm text-gray-400">
+  <span class="bg-[#1a4d2a] px-3 py-1 rounded-full border border-[#2d7a40]">📡 MQTT & IoT Protocols</span>
+  <span class="bg-[#1a4d2a] px-3 py-1 rounded-full border border-[#2d7a40]">🌱 Soil Science</span>
+  <span class="bg-[#1a4d2a] px-3 py-1 rounded-full border border-[#2d7a40]">🔌 ESP32</span>
 </div>
 
 </div>
 
----
-layout: two-cols
-class: text-left
----
+<img src="images/lesson-6.jpg" class="absolute right-0 top-0 h-full w-[45%] object-cover opacity-20" />
 
-# 💧 The Soil Moisture Context
-
-<div class="pr-8 pt-4 space-y-4">
-  <p class="text-lg text-gray-700 dark:text-gray-300">
-    Water drives three critical biological processes:
-  </p>
-  
-  <ul class="space-y-3">
-    <v-clicks>
-      <li class="flex items-start gap-2">
-        <div class="i-carbon-sun text-yellow-500 mt-1"></div>
-        <div><strong>Photosynthesis:</strong> Chemical reaction producing carbohydrates and oxygen.</div>
-      </li>
-      <li class="flex items-start gap-2">
-        <div class="i-carbon-chart-bubble text-blue-500 mt-1"></div>
-        <div><strong>Transpiration:</strong> Cooling the plant and diffusing CO2.</div>
-      </li>
-      <li class="flex items-start gap-2">
-        <div class="i-carbon-chart-network text-green-500 mt-1"></div>
-        <div><strong>Structure:</strong> Plants are 90% water; cell rigidity prevents wilting.</div>
-      </li>
-    </v-clicks>
-  </ul>
-</div>
-
-::right::
-
-<div class="pl-4 h-full flex flex-col items-center justify-center">
-  <div class="relative group">
-    <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-green-600 rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
-    <img src="images\\watering-vgu.png" class="relative rounded-xl shadow-2xl w-full object-cover h-80" alt="Watering Process" />
-  </div>
-  <div class="mt-4 bg-gray-100 dark:bg-gray-800 rounded-lg p-3 w-full border-l-4 border-blue-500">
-    <p class="text-sm font-semibold">The Engineering Goal:</p>
-    <p class="text-xs mt-1 text-gray-500">Prevent root death from overwatering (oxygen deprivation) while maintaining optimal structural hydration.</p>
-  </div>
-</div>
+<!--
+Welcome. Today we bridge the gap between raw sensor data and real-world meaning.
+We'll look at protocols, sensors, and how to build a calibrated soil moisture pipeline on ESP32.
+-->
 
 ---
 layout: center
-class: text-left
+class: text-center
 ---
 
-# 🔌 Sensor Hardware & Topologies
+<div class="absolute inset-0 bg-[#071810]" />
 
-<div class="grid grid-cols-3 gap-6 mt-6">
+<div class="relative z-10">
 
-<v-clicks>
+## Part I
 
-<div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-lg transition-shadow">
-  <div class="i-carbon-chip text-3xl text-indigo-500 mb-3"></div>
-  <h3 class="font-bold text-lg">Resistive & Capacitive</h3>
-  <p class="text-xs text-gray-500 mt-2">
-    <strong>Resistive:</strong> Measures current drop between probes. Wetter soil = lower resistance.<br/><br/>
-    <strong>Capacitive:</strong> Measures stored charge across plates. Wetter soil = lower voltage output.
-  </p>
-</div>
+# <span class="text-[#4ade80]">MQTT & IoT Protocols</span>
 
-<div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-lg transition-shadow">
-  <div class="i-carbon-connection-signal text-3xl text-emerald-500 mb-3"></div>
-  <h3 class="font-bold text-lg">Wired Protocols</h3>
-  <p class="text-xs text-gray-500 mt-2">
-    <strong>Analog Pins:</strong> Uses 10-bit ADC to map voltages (e.g., 3.3V to 1023).<br/><br/>
-    <strong>I²C / SPI / UART:</strong> Digital buses handling packet-addressed data (SDA/SCL) or full-duplex synchronous streams.
-  </p>
-</div>
-
-<div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-lg transition-shadow">
-  <div class="i-carbon-wifi text-3xl text-blue-500 mb-3"></div>
-  <h3 class="font-bold text-lg">Wireless Topologies</h3>
-  <p class="text-xs text-gray-500 mt-2">
-    <strong>LoRaWAN:</strong> Long-range, low power for large agricultural setups.<br/><br/>
-    <strong>Zigbee:</strong> Forms resilient mesh networks, forwarding data node-to-node until reaching the coordinator.
-  </p>
-</div>
-
-</v-clicks>
+<div class="text-gray-400 mt-3">How IoT devices talk to each other — and to the cloud</div>
 
 </div>
 
 ---
-layout: two-cols
-class: text-left
----
 
-# 🧪 Gravimetric Calibration
-## Ground Truth Data
+<div class="absolute inset-0 bg-[#08200f]" />
 
-<div class="pr-6 mt-4">
-  <p class="text-sm mb-4">Raw ADC values (0-1023) are arbitrary without calibration. We establish ground truth by calculating Gravimetric Soil Moisture.</p>
+<div class="relative z-10 h-full flex flex-col justify-center px-12">
 
-  <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 text-center">
-    $$GSM = \frac{W_{wet} - W_{dry}}{W_{dry}} \times 100$$
-  </div>
+<h2 class="text-[#4ade80] text-sm font-mono uppercase tracking-widest mb-2">MQTT Overview</h2>
+<h1 class="text-white text-3xl font-bold mb-8">The Lightweight Messaging Protocol</h1>
 
-  <ol class="mt-6 space-y-3 text-sm list-decimal list-inside">
-    <v-clicks>
-      <li>Record ADC reading of sample.</li>
-      <li>Measure wet weight ($W_{wet}$).</li>
-      <li>Bake sample at 110°C (230°F) until powdery.</li>
-      <li>Measure dry weight ($W_{dry}$).</li>
-      <li>Repeat for varying moisture levels.</li>
-    </v-clicks>
-  </ol>
-</div>
+<div class="grid grid-cols-2 gap-8">
 
-::right::
+<div class="space-y-5">
 
-<div class="flex flex-col gap-4 pl-4 justify-center h-full">
-  <div class="relative group">
-    <div class="absolute -inset-0.5 bg-gradient-to-r from-yellow-600 to-orange-600 rounded-lg blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-    <img src="images\\sampling-ground.png" class="relative rounded-lg shadow-md border w-full h-40 object-cover" alt="Soil Sampling" />
-  </div>
-  <img src="images\\raw-moisture-measure-sample.png" class="rounded-lg shadow-md border w-full h-40 object-cover" alt="Raw ADC Measurements" />
-</div>
-
----
-layout: center
-class: text-left
----
-
-# 📈 Regression Modeling
-
-<div class="grid grid-cols-2 gap-8 items-center mt-8">
-
-<div>
-  <img src="images\\regression.png" class="rounded-xl shadow-lg border border-gray-300 w-full" alt="Linear Regression Model" />
-</div>
-
-<div class="space-y-6">
+<div class="flex gap-4 items-start">
+  <div class="w-10 h-10 rounded-full bg-[#14532d] flex items-center justify-center text-[#4ade80] font-bold flex-shrink-0">P</div>
   <div>
-    <h3 class="text-xl font-bold flex items-center gap-2">
-      <div class="i-carbon-chart-scatter text-blue-500"></div>
-      Fitting the Curve
-    </h3>
-    <p class="text-sm text-gray-500 mt-2">
-      By plotting the calculated Gravimetric Soil Moisture (%) against the raw analog voltages, we extract a linear equation.
-    </p>
+    <div class="text-white font-semibold">Publish / Subscribe</div>
+    <div class="text-gray-400 text-sm mt-1">Devices publish to <span class="text-[#4ade80] font-mono">topics</span>; subscribers receive. No direct device-to-device coupling.</div>
   </div>
+</div>
 
-  <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg font-mono text-sm shadow-inner">
-    y = mx + c <br/>
-    <span class="text-gray-400 text-xs">// y: Predicted Moisture %</span><br/>
-    <span class="text-gray-400 text-xs">// x: Real-time ADC reading</span>
+<div class="flex gap-4 items-start">
+  <div class="w-10 h-10 rounded-full bg-[#14532d] flex items-center justify-center text-[#4ade80] font-bold flex-shrink-0">B</div>
+  <div>
+    <div class="text-white font-semibold">Broker Architecture</div>
+    <div class="text-gray-400 text-sm mt-1">A central <span class="text-[#4ade80]">broker</span> (e.g. Eclipse Mosquitto) routes all messages between publishers and subscribers.</div>
   </div>
+</div>
 
-  <p class="text-sm">
-    This equation is flashed onto the ESP32, allowing the edge device to calculate actual moisture percentage locally before publishing.
-  </p>
+<div class="flex gap-4 items-start">
+  <div class="w-10 h-10 rounded-full bg-[#14532d] flex items-center justify-center text-[#4ade80] font-bold flex-shrink-0">Q</div>
+  <div>
+    <div class="text-white font-semibold">Quality of Service (QoS)</div>
+    <div class="text-gray-400 text-sm mt-1">QoS 0 (at most once), QoS 1 (at least once), QoS 2 (exactly once).</div>
+  </div>
+</div>
+
+</div>
+
+<div class="bg-[#0d2b17] rounded-xl p-5 border border-[#1a4d2a]">
+
+```
+ESP32 (Sensor Node)
+   │
+   │ publish("farm/soil/moisture", 512)
+   ▼
+[MQTT Broker]
+   │
+   │ subscribe("farm/soil/#")
+   ▼
+Cloud Dashboard / Server
+```
+
+<div class="mt-3 text-xs text-gray-500">Typical IoT soil monitoring topology</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!--
+MQTT is the backbone of most IoT systems.
+Its pub/sub model means sensors don't need to know who's listening — perfect for scale.
+-->
+
+---
+
+<div class="absolute inset-0 bg-[#08200f]" />
+
+<div class="relative z-10 h-full flex flex-col justify-center px-12">
+
+<h2 class="text-[#4ade80] text-sm font-mono uppercase tracking-widest mb-2">IoT Protocol Landscape</h2>
+<h1 class="text-white text-3xl font-bold mb-8">Choosing the Right Protocol</h1>
+
+<div class="grid grid-cols-3 gap-4">
+
+<div class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-5 hover:border-[#4ade80] transition-colors">
+  <div class="text-[#4ade80] text-2xl mb-2">📡</div>
+  <div class="text-white font-bold text-lg">MQTT</div>
+  <div class="text-gray-400 text-sm mt-2">Low bandwidth, pub/sub over TCP. Ideal for constrained devices & cloud telemetry.</div>
+  <div class="mt-3 text-xs font-mono text-[#4ade80]">Port 1883 / 8883 (TLS)</div>
+</div>
+
+<div class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-5 hover:border-[#4ade80] transition-colors">
+  <div class="text-[#4ade80] text-2xl mb-2">🌐</div>
+  <div class="text-white font-bold text-lg">HTTP / REST</div>
+  <div class="text-gray-400 text-sm mt-2">Familiar request/response. Higher overhead, better for configuration & dashboards.</div>
+  <div class="mt-3 text-xs font-mono text-[#4ade80]">Port 80 / 443</div>
+</div>
+
+<div class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-5 hover:border-[#4ade80] transition-colors">
+  <div class="text-[#4ade80] text-2xl mb-2">📶</div>
+  <div class="text-white font-bold text-lg">LoRaWAN</div>
+  <div class="text-gray-400 text-sm mt-2">Long-range, ultra-low power. Used in field-deployed sensors kilometres from a hub.</div>
+  <div class="mt-3 text-xs font-mono text-[#4ade80]">868 / 915 MHz</div>
+</div>
+
+</div>
+
+<div class="mt-6 grid grid-cols-2 gap-4">
+
+<div class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4 flex gap-4 items-center">
+  <div class="text-2xl">🔵</div>
+  <div>
+    <div class="text-white font-bold">Bluetooth LE</div>
+    <div class="text-gray-400 text-sm">Short range, ideal for wearables & nearby sensors. Used with phone-based gateways.</div>
+  </div>
+</div>
+
+<div class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4 flex gap-4 items-center">
+  <div class="text-2xl">🕸️</div>
+  <div>
+    <div class="text-white font-bold">Zigbee / Z-Wave</div>
+    <div class="text-gray-400 text-sm">Mesh networking. Each node relays data, great for building-scale deployments.</div>
+  </div>
+</div>
+
 </div>
 
 </div>
 
 ---
 layout: center
-class: text-left
+class: text-center
 ---
 
-# 💻 ESP32 Edge Logic: Filtering & Publishing
+<div class="absolute inset-0 bg-[#071810]" />
 
-<div class="mt-4 text-left">
-  <p class="text-sm text-gray-500 mb-2">Implementing the Moving Average algorithm and MQTT client on the microcontroller.</p>
+<div class="relative z-10">
+
+## Part II
+
+# <span class="text-[#4ade80]">Our Project</span>
+
+<div class="text-gray-400 mt-3">Soil moisture detection at VGU</div>
+
 </div>
 
-```cpp {1-3|5-15|17-23|all}
-// Constants derived from our Linear Regression calibration
-const float M_SLOPE = -0.075; 
-const float C_INTERCEPT = 85.0; 
+---
 
-// Moving Average implementation for noisy ADC readings
-const int numReadings = 10;
-int readings[numReadings];      
-int readIndex = 0, total = 0, average = 0;
+<div class="absolute inset-0 bg-[#08200f]" />
 
-void updateMoistureAverage() {
-  total = total - readings[readIndex];       
-  readings[readIndex] = analogRead(MOISTURE_PIN); 
-  total = total + readings[readIndex];       
-  readIndex = (readIndex + 1) % numReadings; 
-  average = total / numReadings;                
+<div class="relative z-10 h-full flex flex-col justify-center px-12">
+
+<h2 class="text-[#4ade80] text-sm font-mono uppercase tracking-widest mb-2">Project Introduction</h2>
+<h1 class="text-white text-3xl font-bold mb-6">Automated Soil Moisture Monitoring at VGU</h1>
+
+<div class="grid grid-cols-2 gap-8 items-center">
+
+<div class="space-y-4">
+  <p class="text-gray-300 text-base leading-relaxed">
+    Plants need water to survive — but <span class="text-[#4ade80] font-semibold">too little</span> starves roots, and <span class="text-[#4ade80] font-semibold">too much</span> suffocates them. Manual watering is unreliable and wasteful.
+  </p>
+  <p class="text-gray-300 text-base leading-relaxed">
+    Our project deploys ESP32-based <span class="text-[#4ade80] font-semibold">soil moisture sensors</span> across VGU campus to measure, calibrate, and infer real soil water content — enabling intelligent, data-driven watering decisions.
+  </p>
+  <div class="flex gap-3 mt-4 flex-wrap">
+    <span class="bg-[#14532d] text-[#4ade80] px-3 py-1 rounded-full text-sm border border-[#2d7a40]">🌱 Capacitive Sensor</span>
+    <span class="bg-[#14532d] text-[#4ade80] px-3 py-1 rounded-full text-sm border border-[#2d7a40]">🔌 ESP32</span>
+    <span class="bg-[#14532d] text-[#4ade80] px-3 py-1 rounded-full text-sm border border-[#2d7a40]">📊 Linear Regression</span>
+    <span class="bg-[#14532d] text-[#4ade80] px-3 py-1 rounded-full text-sm border border-[#2d7a40]">📡 MQTT</span>
+  </div>
+</div>
+
+<div class="rounded-2xl overflow-hidden border border-[#1a4d2a] bg-[#0d2b17] flex items-center justify-center h-60">
+  <!-- watering-vgu.png: replace src below when file is available -->
+  <div class="text-center text-gray-500">
+    <div class="text-5xl mb-3">🌿</div>
+    <div class="text-sm font-mono">watering-vgu.png</div>
+    <div class="text-xs mt-1 text-gray-600">VGU campus watering system</div>
+  </div>
+</div>
+
+</div>
+
+</div>
+
+<!--
+This is the "why" slide.
+IoT devices remove guesswork from irrigation — precision agriculture at campus scale.
+-->
+
+---
+layout: center
+class: text-center
+---
+
+<div class="absolute inset-0 bg-[#071810]" />
+
+<div class="relative z-10">
+
+## Part III
+
+# <span class="text-[#4ade80]">Sensor Communication</span>
+
+<div class="text-gray-400 mt-3">How sensors talk to IoT devices: GPIO, Analog, I²C, SPI, Wireless</div>
+
+</div>
+
+---
+
+<div class="absolute inset-0 bg-[#08200f]" />
+
+<div class="relative z-10 h-full flex flex-col justify-center px-12">
+
+<h2 class="text-[#4ade80] text-sm font-mono uppercase tracking-widest mb-2">Sensor Protocols</h2>
+<h1 class="text-white text-3xl font-bold mb-6">How Sensors Communicate with IoT Devices</h1>
+
+<div class="grid grid-cols-3 gap-4">
+
+<div class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4">
+  <div class="text-[#4ade80] font-mono font-bold text-base mb-2">GPIO</div>
+  <div class="text-gray-300 text-sm">General Purpose I/O pins. Digital only — HIGH or LOW. Used for buttons, LEDs, and simple on/off sensors.</div>
+  <div class="mt-2 text-xs text-gray-500">3.3V or 5V · Binary signal</div>
+</div>
+
+<div class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4">
+  <div class="text-[#4ade80] font-mono font-bold text-base mb-2">Analog Pin (ADC)</div>
+  <div class="text-gray-300 text-sm">Converts a voltage range into a 10-bit number (0–1023). <span class="text-[#4ade80]">Our soil moisture sensor uses this.</span></div>
+  <div class="mt-2 text-xs text-gray-500">0–3.3V → 0–1023</div>
+</div>
+
+<div class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4">
+  <div class="text-[#4ade80] font-mono font-bold text-base mb-2">I²C</div>
+  <div class="text-gray-300 text-sm">Multi-device bus using 2 wires (SDA + SCL). Each device has a unique address. Up to 400 Kbps.</div>
+  <div class="mt-2 text-xs text-gray-500">Addressed packets · Clock-synced</div>
+</div>
+
+<div class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4">
+  <div class="text-[#4ade80] font-mono font-bold text-base mb-2">SPI</div>
+  <div class="text-gray-300 text-sm">Full-duplex, high speed (multi-MB/s). Controller selects one peripheral at a time via Chip Select wire.</div>
+  <div class="mt-2 text-xs text-gray-500">COPI · CIPO · SCLK · CS</div>
+</div>
+
+<div class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4">
+  <div class="text-[#4ade80] font-mono font-bold text-base mb-2">UART</div>
+  <div class="text-gray-300 text-sm">Two-wire serial: Tx → Rx. Async communication with defined baud rate (e.g. 9600 bps). Common for GPS.</div>
+  <div class="mt-2 text-xs text-gray-500">Start bit · 8 data bits · Stop bit</div>
+</div>
+
+<div class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4">
+  <div class="text-[#4ade80] font-mono font-bold text-base mb-2">Wireless</div>
+  <div class="text-gray-300 text-sm">BLE, WiFi, LoRaWAN, Zigbee. Enables remote sensing without physical cable runs.</div>
+  <div class="mt-2 text-xs text-gray-500">LoRaWAN: km-range, µW power</div>
+</div>
+
+</div>
+
+</div>
+
+---
+
+<div class="absolute inset-0 bg-[#08200f]" />
+
+<div class="relative z-10 h-full flex flex-col justify-center px-12">
+
+<h2 class="text-[#4ade80] text-sm font-mono uppercase tracking-widest mb-2">Moisture Sensor Deep-Dive</h2>
+<h1 class="text-white text-3xl font-bold mb-6">Capacitive vs Resistive Soil Moisture Sensors</h1>
+
+<div class="grid grid-cols-2 gap-8">
+
+<div class="space-y-5">
+
+<div class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-5">
+  <div class="text-[#4ade80] font-bold text-lg mb-2">⚡ Resistive Sensor</div>
+  <div class="text-gray-300 text-sm leading-relaxed">Two metal probes in soil. Measures how much current passes between them. Water conducts electricity — <span class="text-white">wetter soil = lower resistance</span>.</div>
+  <div class="mt-2 text-xs text-red-400">⚠ Corrodes over time due to electrolysis</div>
+</div>
+
+<div class="bg-[#0d2b17] border border-[#2d7a40] rounded-xl p-5 ring-1 ring-[#4ade80]">
+  <div class="text-[#4ade80] font-bold text-lg mb-2">🌊 Capacitive Sensor <span class="text-xs bg-[#14532d] px-2 py-0.5 rounded-full ml-1">Our Choice</span></div>
+  <div class="text-gray-300 text-sm leading-relaxed">Measures electric charge storage across two plates. Wetter soil → lower output voltage. Analog output: 0–3.3V → read as 0–1023 by ADC.</div>
+  <div class="mt-2 text-xs text-[#4ade80]">✓ No corrosion · Long lifespan · Stable readings</div>
+</div>
+
+</div>
+
+<div class="flex flex-col gap-4">
+  <img src="images/fc28-moisture-detection.jpg" class="rounded-xl object-cover w-full h-44 border border-[#1a4d2a]" alt="FC-28 moisture sensor" />
+  <div class="bg-[#0d2b17] rounded-xl p-4 border border-[#1a4d2a] text-sm text-gray-300">
+    <div class="text-white font-semibold mb-1">FC-28 Capacitive Sensor</div>
+    Outputs an analog voltage. Read via ESP32 ADC pin. Raw value: <span class="text-[#4ade80] font-mono">0–1023</span> → must be calibrated to get actual <span class="text-[#4ade80]">%</span> moisture.
+  </div>
+</div>
+
+</div>
+
+</div>
+
+---
+layout: center
+class: text-center
+---
+
+<div class="absolute inset-0 bg-[#071810]" />
+
+<div class="relative z-10">
+
+## Part IV
+
+# <span class="text-[#4ade80]">The Soil Moisture Problem</span>
+
+<div class="text-gray-400 mt-3">Hardware → Data Collection → Calibration → Inference</div>
+
+</div>
+
+---
+
+<div class="absolute inset-0 bg-[#08200f]" />
+
+<div class="relative z-10 h-full flex flex-col justify-center px-12">
+
+<h2 class="text-[#4ade80] text-sm font-mono uppercase tracking-widest mb-2">Step 1 — Hardware</h2>
+<h1 class="text-white text-3xl font-bold mb-6">Our Devices</h1>
+
+<div class="grid grid-cols-2 gap-8 items-start">
+
+<div class="space-y-4">
+
+<div class="flex gap-4 items-center bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4">
+  <img src="images/esp32-node-mcu-32s.png" class="w-16 h-16 object-contain rounded-lg" alt="ESP32" />
+  <div>
+    <div class="text-white font-bold">ESP32 NodeMCU-32S</div>
+    <div class="text-gray-400 text-sm">Main microcontroller. Dual-core 240 MHz, built-in WiFi & BLE. Reads sensor via ADC pin.</div>
+  </div>
+</div>
+
+<div class="flex gap-4 items-center bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4">
+  <img src="images/fc28-moisture-detection.jpg" class="w-16 h-16 object-contain rounded-lg" alt="Sensor" />
+  <div>
+    <div class="text-white font-bold">FC-28 Moisture Sensor</div>
+    <div class="text-gray-400 text-sm">Capacitive type. Analog voltage output. Plugs into ESP32 ADC pin directly.</div>
+  </div>
+</div>
+
+<div class="flex gap-4 items-center bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4">
+  <div class="text-3xl w-16 text-center">🔋</div>
+  <div>
+    <div class="text-white font-bold">Power Supply</div>
+    <div class="text-gray-400 text-sm">USB-powered via laptop or power bank during field measurements.</div>
+  </div>
+</div>
+
+</div>
+
+<div class="space-y-4">
+  <img src="images/circuit-board.jpg" class="rounded-xl w-full h-44 object-cover border border-[#1a4d2a]" alt="Circuit board" />
+  <img src="images/circuit-board-graph.jpg" class="rounded-xl w-full h-36 object-cover border border-[#1a4d2a]" alt="Circuit diagram" />
+</div>
+
+</div>
+
+</div>
+
+---
+
+<div class="absolute inset-0 bg-[#08200f]" />
+
+<div class="relative z-10 h-full flex flex-col justify-center px-12">
+
+<h2 class="text-[#4ade80] text-sm font-mono uppercase tracking-widest mb-2">Step 2 — Data Collection</h2>
+<h1 class="text-white text-3xl font-bold mb-6">Sampling & Calibration</h1>
+
+<div class="grid grid-cols-2 gap-8">
+
+<div class="space-y-4">
+
+<div class="text-gray-300 text-sm leading-relaxed">
+  Raw sensor readings (0–1023) are meaningless without calibration. We follow the <span class="text-[#4ade80] font-semibold">gravimetric method</span>:
+</div>
+
+<div class="space-y-3">
+  <div class="flex gap-3 items-start">
+    <div class="w-6 h-6 rounded-full bg-[#4ade80] text-black text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">1</div>
+    <div class="text-gray-300 text-sm">Insert sensor → record raw ADC reading</div>
+  </div>
+  <div class="flex gap-3 items-start">
+    <div class="w-6 h-6 rounded-full bg-[#4ade80] text-black text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">2</div>
+    <div class="text-gray-300 text-sm">Take soil sample → weigh it (W<sub>wet</sub>)</div>
+  </div>
+  <div class="flex gap-3 items-start">
+    <div class="w-6 h-6 rounded-full bg-[#4ade80] text-black text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">3</div>
+    <div class="text-gray-300 text-sm">Dry soil at 110°C for several hours → weigh again (W<sub>dry</sub>)</div>
+  </div>
+  <div class="flex gap-3 items-start">
+    <div class="w-6 h-6 rounded-full bg-[#4ade80] text-black text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">4</div>
+    <div class="text-gray-300 text-sm">Calculate soil moisture %, repeat ≥ 3 samples</div>
+  </div>
+</div>
+
+<div class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4">
+  <div class="text-[#4ade80] font-mono text-sm mb-2">Gravimetric Soil Moisture</div>
+  <img src="images/calculation-soil-moisture-1.png" class="w-full object-contain rounded" alt="GSM formula" />
+</div>
+
+</div>
+
+<div class="space-y-4">
+  <!-- sampling-ground.png placeholder -->
+  <div class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4 flex flex-col items-center justify-center h-36 text-gray-500">
+    <div class="text-3xl mb-2">🗺️</div>
+    <div class="text-xs font-mono">sampling-ground.png</div>
+    <div class="text-xs text-gray-600 mt-1">VGU campus sampling locations</div>
+  </div>
+  <!-- raw-moisture-measure-sample.png placeholder -->
+  <div class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4 flex flex-col items-center justify-center h-36 text-gray-500">
+    <div class="text-3xl mb-2">📸</div>
+    <div class="text-xs font-mono">raw-moisture-measure-sample.png</div>
+    <div class="text-xs text-gray-600 mt-1">Field measurement in progress</div>
+  </div>
+</div>
+
+</div>
+
+</div>
+
+---
+
+<div class="absolute inset-0 bg-[#08200f]" />
+
+<div class="relative z-10 h-full flex flex-col justify-center px-12">
+
+<h2 class="text-[#4ade80] text-sm font-mono uppercase tracking-widest mb-2">Step 2 — Calibration Example</h2>
+<h1 class="text-white text-3xl font-bold mb-6">Gravimetric Soil Moisture — Worked Example</h1>
+
+<div class="grid grid-cols-2 gap-10 items-center">
+
+<div class="space-y-5">
+
+<div class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-5">
+  <div class="text-[#4ade80] font-semibold mb-3">Given sample:</div>
+  <div class="space-y-2 text-sm text-gray-300">
+    <div class="flex justify-between"><span>W<sub>wet</sub></span><span class="font-mono text-white">212 g</span></div>
+    <div class="flex justify-between"><span>W<sub>dry</sub></span><span class="font-mono text-white">197 g</span></div>
+    <div class="border-t border-[#1a4d2a] my-2"></div>
+    <div class="flex justify-between"><span>W<sub>wet</sub> − W<sub>dry</sub></span><span class="font-mono text-white">15 g</span></div>
+    <div class="flex justify-between"><span>÷ W<sub>dry</sub></span><span class="font-mono text-white">0.076</span></div>
+    <div class="flex justify-between"><span>× 100</span><span class="font-mono text-[#4ade80] font-bold">7.6 %</span></div>
+  </div>
+</div>
+
+<div class="text-gray-400 text-sm leading-relaxed">
+  Repeat for ≥ 3 soil samples at different wetness levels. Plot <span class="text-[#4ade80]">sensor voltage</span> vs <span class="text-[#4ade80]">moisture %</span> to build the calibration curve.
+</div>
+
+</div>
+
+<div class="space-y-4">
+  <img src="images/calculation-soil-moisture-2.png" class="rounded-xl w-full object-contain border border-[#1a4d2a]" alt="GSM calculation example" />
+</div>
+
+</div>
+
+</div>
+
+---
+
+<div class="absolute inset-0 bg-[#08200f]" />
+
+<div class="relative z-10 h-full flex flex-col justify-center px-12">
+
+<h2 class="text-[#4ade80] text-sm font-mono uppercase tracking-widest mb-2">Step 2 — Linear Regression</h2>
+<h1 class="text-white text-3xl font-bold mb-6">Fitting the Calibration Curve</h1>
+
+<div class="grid grid-cols-2 gap-8 items-center">
+
+<div class="space-y-5">
+
+<div class="text-gray-300 text-sm leading-relaxed">
+  Once we have ≥ 3 data points (sensor reading → actual moisture %), we fit a <span class="text-[#4ade80] font-semibold">linear regression</span> line:
+</div>
+
+<div class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4 font-mono text-sm">
+  <div class="text-[#4ade80]">moisture_% = m × voltage + b</div>
+  <div class="text-gray-500 text-xs mt-1">where m and b are learned from samples</div>
+</div>
+
+<div class="space-y-3 text-sm text-gray-300">
+  <div class="flex gap-3 items-start">
+    <div class="text-[#4ade80] font-bold">→</div>
+    <div>For <span class="text-white">capacitive sensors</span>: higher voltage = drier soil (inverse relationship)</div>
+  </div>
+  <div class="flex gap-3 items-start">
+    <div class="text-[#4ade80] font-bold">→</div>
+    <div>For <span class="text-white">resistive sensors</span>: higher voltage = wetter soil (direct relationship)</div>
+  </div>
+  <div class="flex gap-3 items-start">
+    <div class="text-[#4ade80] font-bold">→</div>
+    <div>The line lets us convert any new sensor reading to moisture % in real time</div>
+  </div>
+</div>
+
+</div>
+
+<!-- regression.png placeholder -->
+<div class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl flex flex-col items-center justify-center h-64 text-gray-500">
+  <div class="text-4xl mb-3">📈</div>
+  <div class="text-sm font-mono">regression.png</div>
+  <div class="text-xs text-gray-600 mt-1">Voltage vs. Moisture % with best-fit line</div>
+</div>
+
+</div>
+
+</div>
+
+---
+
+<div class="absolute inset-0 bg-[#08200f]" />
+
+<div class="relative z-10 h-full flex flex-col justify-center px-12">
+
+<h2 class="text-[#4ade80] text-sm font-mono uppercase tracking-widest mb-2">Step 3 — ESP32 Code</h2>
+<h1 class="text-white text-3xl font-bold mb-5">IoT Code for Soil Moisture Reading</h1>
+
+<div class="grid grid-cols-2 gap-8">
+
+<div class="bg-[#071810] rounded-xl border border-[#1a4d2a] p-5 font-mono text-sm overflow-hidden">
+
+```cpp
+// ESP32 Soil Moisture Reader
+#include <Arduino.h>
+
+const int SENSOR_PIN = 34; // ADC1_CH6
+const int NUM_SAMPLES = 10;
+
+// Calibration coefficients (from regression)
+// moisture_% = SLOPE * raw + INTERCEPT
+const float SLOPE = -0.062f;
+const float INTERCEPT = 73.4f;
+
+float readMoisturePercent() {
+  long sum = 0;
+  for (int i = 0; i < NUM_SAMPLES; i++) {
+    sum += analogRead(SENSOR_PIN);
+    delay(10);
+  }
+  float raw = sum / (float)NUM_SAMPLES;
+  float voltage = raw * (3.3f / 4095.0f);
+  return SLOPE * voltage + INTERCEPT;
 }
 
 void loop() {
-  updateMoistureAverage();
-  
-  // Apply regression formula
-  float moisturePercent = (M_SLOPE * average) + C_INTERCEPT;
-  
-  mqttClient.publish("vgu/agri/soil_moisture", String(moisturePercent).c_str());
-  delay(5000); 
+  float moisture = readMoisturePercent();
+  Serial.printf("Moisture: %.1f%%\n", moisture);
+  delay(1000);
 }
-````
-
----
-layout: center
-class: text-left
----
-
-# ⚙️ The Inference Pipeline
-
-<div class="relative mt-8">
-    <div class="absolute inset-0 flex items-center justify-center opacity-10">
-    <div class="i-carbon-machine-learning text-[20rem]"></div>
-</div>
-<div class="grid grid-cols-2 gap-12 relative z-10">
-<div class="flex flex-col justify-center space-y-6">
-  <div class="p-5 bg-white/80 dark:bg-gray-800/80 backdrop-blur rounded-xl shadow-lg border border-gray-200">
-    <h3 class="font-bold text-lg mb-2">1. Noise Reduction</h3>
-    <p class="text-sm text-gray-600 dark:text-gray-300">
-      Raw soil readings spike drastically due to electrical interference or minor soil shifts. The <strong>Moving Average</strong> acts as a low-pass filter.
-    </p>
-  </div>
-
-  <div class="p-5 bg-white/80 dark:bg-gray-800/80 backdrop-blur rounded-xl shadow-lg border border-gray-200">
-    <h3 class="font-bold text-lg mb-2">2. Edge Inference</h3>
-    <p class="text-sm text-gray-600 dark:text-gray-300">
-      The linear regression model evaluates the smoothed signal locally, saving bandwidth by only transmitting processed percentages.
-    </p>
-  </div>
-</div>
-
-<div class="flex items-center">
-  <img src="images\\pipeline.png" class="rounded-xl shadow-2xl border-4 border-gray-800 object-cover w-full hover:scale-105 transition-transform duration-300" alt="Inference Pipeline" />
-</div>
 ```
 
 </div>
+
+<div class="space-y-4">
+
+<div class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4">
+  <div class="text-[#4ade80] font-semibold mb-2">Key implementation details</div>
+  <ul class="text-gray-300 text-sm space-y-2">
+    <li>• ADC pin 34 — 12-bit resolution (0–4095) on ESP32</li>
+    <li>• 10-sample average reduces electrical noise</li>
+    <li>• Linear model applied after averaging</li>
+    <li>• Publishes to MQTT topic via WiFi</li>
+  </ul>
 </div>
 
----
-layout: center
-class: text-center
----
-
-# 🌿 Future Scope: Beyond Moisture
-
-<div class="mt-8 max-w-3xl mx-auto space-y-6">
-
-<p class="text-xl text-gray-700 dark:text-gray-300">
-Merging IoT Telemetry with <span class="text-blue-500 font-bold">Computer Vision</span>
-</p>
-
-<div class="grid grid-cols-2 gap-4 text-left">
-<div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-xl border border-blue-200 dark:border-blue-900">
-<div class="i-carbon-tree text-3xl text-green-600 mb-2"></div>
-<h4 class="font-bold mb-1">Local Agriculture Focus</h4>
-<p class="text-sm text-gray-600 dark:text-gray-400">
-Adapting this moisture baseline dataset to monitor optimal hydration conditions for specialized industrial crops prevalent in Binh Duong, such as rubber trees and pepper plants.
-</p>
+<div class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4">
+  <div class="text-[#4ade80] font-semibold mb-2">MQTT publish snippet</div>
+  <div class="font-mono text-xs text-gray-300">
+    <div><span class="text-[#4ade80]">client</span>.publish(</div>
+    <div class="pl-4"><span class="text-yellow-400">"vgu/soil/moisture"</span>,</div>
+    <div class="pl-4">String(moisture).c_str()</div>
+    <div>);</div>
+  </div>
 </div>
-<div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-xl border border-purple-200 dark:border-purple-900">
-<div class="i-carbon-camera text-3xl text-purple-600 mb-2"></div>
-<h4 class="font-bold mb-1">Multimodal AI Models</h4>
-<p class="text-sm text-gray-600 dark:text-gray-400">
-Feeding live moisture telemetry into Deep Learning / YOLO architectures to correlate visual plant stress (wilting, leaf discoloration) directly with subterranean soil conditions.
-</p>
+
 </div>
+
 </div>
 
 </div>
 
 ---
-layout: center
-class: text-center
+
+<div class="absolute inset-0 bg-[#08200f]" />
+
+<div class="relative z-10 h-full flex flex-col justify-center px-12">
+
+<h2 class="text-[#4ade80] text-sm font-mono uppercase tracking-widest mb-2">Step 4 — Inference Pipeline</h2>
+<h1 class="text-white text-3xl font-bold mb-6">From Raw Reading to Actionable Moisture Data</h1>
+
+<div class="grid grid-cols-2 gap-8 items-center">
+
+<div class="space-y-5">
+
+<div class="text-gray-300 text-sm leading-relaxed">
+  A single reading can be noisy. We apply a <span class="text-[#4ade80] font-semibold">moving average</span> over multiple measurements taken at different times to smooth out noise and capture true soil state.
+</div>
+
+<div class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4 font-mono text-sm space-y-1">
+  <div class="text-gray-500 text-xs mb-2">// Moving average window</div>
+  <div><span class="text-blue-400">const</span> <span class="text-white">WINDOW_SIZE</span> = <span class="text-[#4ade80]">5</span>;</div>
+  <div><span class="text-blue-400">float</span> readings[WINDOW_SIZE];</div>
+  <div class="mt-2 text-gray-500 text-xs">// Average before applying model</div>
+  <div><span class="text-blue-400">float</span> avg = mean(readings);</div>
+  <div><span class="text-blue-400">float</span> moisture = model(avg);</div>
+</div>
+
+<div class="space-y-2 text-sm text-gray-300">
+  <div class="flex gap-3"><span class="text-[#4ade80]">⏱</span><span>Readings taken every 30 min — captures diurnal variation</span></div>
+  <div class="flex gap-3"><span class="text-[#4ade80]">📊</span><span>Moving average over last 5 readings smooths noise</span></div>
+  <div class="flex gap-3"><span class="text-[#4ade80]">🚨</span><span>Alert if moisture drops below threshold → trigger watering</span></div>
+</div>
+
+</div>
+
+<!-- pipeline.png placeholder -->
+<div class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl flex flex-col items-center justify-center h-72 text-gray-500">
+  <div class="text-4xl mb-3">🔄</div>
+  <div class="text-sm font-mono">pipeline.png</div>
+  <div class="text-xs text-gray-600 mt-1">End-to-end inference pipeline diagram</div>
+</div>
+
+</div>
+
+</div>
+
 ---
 
-<div class="i-carbon-checkmark-outline text-6xl text-green-500 mx-auto mb-6"></div>
+<div class="absolute inset-0 bg-gradient-to-br from-[#0a2e1a] via-[#0d3d1f] to-[#071a10]" />
 
-# System Deployed
+<div class="relative z-10 h-full flex flex-col justify-center items-center text-center px-12">
 
-## Thank You
+<div class="text-[#4ade80] text-sm font-mono uppercase tracking-widest mb-4">Summary</div>
 
-<div class="mt-8">
-<code class="px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm font-mono border">mqtt.disconnect()</code>
+<h1 class="text-white text-4xl font-bold mb-8">What We Built</h1>
+
+<div class="grid grid-cols-4 gap-5 w-full max-w-4xl">
+
+<div class="bg-[#0d2b17] border border-[#1a4d2a] rounded-2xl p-5">
+  <div class="text-3xl mb-3">📡</div>
+  <div class="text-white font-bold mb-1">MQTT Protocol</div>
+  <div class="text-gray-400 text-xs">Pub/sub messaging between ESP32 and cloud dashboard</div>
 </div>
+
+<div class="bg-[#0d2b17] border border-[#1a4d2a] rounded-2xl p-5">
+  <div class="text-3xl mb-3">🔌</div>
+  <div class="text-white font-bold mb-1">Sensor Wiring</div>
+  <div class="text-gray-400 text-xs">GPIO, ADC, I²C, SPI — matched to sensor type</div>
+</div>
+
+<div class="bg-[#0d2b17] border border-[#1a4d2a] rounded-2xl p-5">
+  <div class="text-3xl mb-3">📊</div>
+  <div class="text-white font-bold mb-1">Calibration</div>
+  <div class="text-gray-400 text-xs">Gravimetric sampling → linear regression model</div>
+</div>
+
+<div class="bg-[#0d2b17] border border-[#1a4d2a] rounded-2xl p-5">
+  <div class="text-3xl mb-3">🔄</div>
+  <div class="text-white font-bold mb-1">Live Inference</div>
+  <div class="text-gray-400 text-xs">Moving average + model → actionable moisture %</div>
+</div>
+
+</div>
+
+<div class="mt-10 text-gray-500 text-sm">
+  Microsoft IoT for Beginners · Farm Project · Lesson 6 — Detect Soil Moisture
+</div>
+
+</div>
+
+<!--
+We've covered the full stack: protocol, hardware, calibration, and inference.
+The same pipeline scales from a single plant to an entire farm.
+-->

@@ -1,6 +1,6 @@
 # Context:
 
-Bạn là nhà viết slide chuyên nghiệp sử dụng Markdown + công cụ Slidev. Mình nhờ bạn làm slide cho project IoT (assignment.md, SOIL_README.md)
+Bạn là nhà viết slide chuyên nghiệp sử dụng Markdown + công cụ Slidev. Mình nhờ bạn làm slide cho project IoT (assignment.md, SOIL_README.md HOẶC link [Lesson 2 của repo Github](https://github.com/microsoft/IoT-For-Beginners/tree/main/2-farm/lessons/2-detect-soil-moisture)).
 
 Mục tiêu của bạn: Làm slide thật đẹp, bắt mắt với các hiệu ứng sử dụng công cụ nêu trên. Đồng thời (a) sáng tạo dựa trên dàn bài được giao và (b) làm rõ bất kỳ thắc mắc nào để bạn có thể hoàn thành tác vụ một cách ổn thỏa nhất. Không thêm những thứ không tồn tại vào.
 
