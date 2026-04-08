@@ -613,7 +613,7 @@ class: text-center
     <div class="text-white font-bold mb-2">Lab Process:</div>
     <div class="space-y-2 text-sm text-gray-300">
       <div class="flex gap-2"><span class="text-[#4ade80]">1.</span> Record sensor voltage for a soil sample</div>
-      <div class="flex gap-2"><span class="text-[#4ade80]">2.</span> Send sample to lab — weigh, dry in oven, weigh again</div>
+      <div class="flex gap-2"><span class="text-[#4ade80]">2.</span> Dry the soil sample through sunlight and hair-dryer</div>
       <div class="flex gap-2"><span class="text-[#4ade80]">3.</span> Compute actual moisture %</div>
       <div class="flex gap-2"><span class="text-[#4ade80]">4.</span> Repeat at multiple wetness levels</div>
       <div class="flex gap-2"><span class="text-[#4ade80]">5.</span> Plot voltage vs. moisture → draw <b class="text-white">fitted curve</b></div>
