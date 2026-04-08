@@ -653,7 +653,7 @@ class: text-center
 
 # <span class="text-[#4ade80]">Our Equipment</span>
 
-<div class="text-gray-400 mt-3">ESP32, sensors, and wiring</div>
+<div class="text-gray-400 mt-3">ESP32, and Soil Moisture detection sensors</div>
 
 </div>
 
@@ -809,37 +809,90 @@ Let's put this into practice. We calibrate the ESP32 and sensor by creating our 
 <div class="relative z-10 h-full flex flex-col justify-center px-12">
 
 <h2 class="text-[#4ade80] text-sm font-mono uppercase tracking-widest mb-2">5.1 — Field Measurement</h2>
-<h1 class="text-white text-3xl font-bold mb-4">Data Collection Steps</h1>
+<h1 class="text-white text-3xl font-bold mb-4">Data Collection Flow</h1>
 
-<div class="text-gray-400 text-sm mb-4" v-click>Repeat ≥ 3 times with different soil wetness levels:</div>
+<div class="text-gray-400 text-sm mb-8" v-click>Repeat for multiple moisture levels (Sample 2: 1878.9 ADC)</div>
 
-<div class="grid grid-cols-4 gap-4">
-  <div v-click class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4 text-center">
+<div class="flex items-center justify-between gap-2">
+  <div v-click class="flex-1 bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4 text-center relative">
     <div class="w-8 h-8 rounded-full bg-[#4ade80] text-black text-sm font-bold flex items-center justify-center mx-auto mb-3">1</div>
-    <div class="text-white font-bold text-sm mb-2">Sensor Reading</div>
-    <div class="text-gray-400 text-xs">Insert sensor, record raw ADC value (0–4095)</div>
-    <div class="mt-3 bg-[#071810] rounded-lg p-2 text-[10px] font-mono text-[#4ade80]">exp-1-sensor-measure.png</div>
+    <div class="text-white font-bold text-xs mb-1">Measure</div>
+    <div class="text-[10px] text-gray-500">Record ADC</div>
   </div>
-  <div v-click class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4 text-center">
+  <div v-click class="text-[#1a4d2a] text-xl">→</div>
+  <div v-click class="flex-1 bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4 text-center relative">
     <div class="w-8 h-8 rounded-full bg-[#4ade80] text-black text-sm font-bold flex items-center justify-center mx-auto mb-3">2</div>
-    <div class="text-white font-bold text-sm mb-2">Weigh Wet</div>
-    <div class="text-gray-400 text-xs">Take soil sample, weigh it → W<sub>wet</sub></div>
-    <div class="mt-3 bg-[#071810] rounded-lg p-2 text-[10px] font-mono text-[#4ade80]">exp-2-wet-weight.png</div>
+    <div class="text-white font-bold text-xs mb-1">Weigh Wet</div>
+    <div class="text-[10px] text-gray-500">Mass W<sub>wet</sub></div>
   </div>
-  <div v-click class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4 text-center">
+  <div v-click class="text-[#1a4d2a] text-xl">→</div>
+  <div v-click class="flex-1 bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4 text-center relative">
     <div class="w-8 h-8 rounded-full bg-[#4ade80] text-black text-sm font-bold flex items-center justify-center mx-auto mb-3">3</div>
-    <div class="text-white font-bold text-sm mb-2">Dry the Soil</div>
-    <div class="text-gray-400 text-xs">Oven at 110°C or sunlight + hair dryer until powdery</div>
-    <div class="mt-3 bg-[#071810] rounded-lg p-2 text-[10px] font-mono text-[#4ade80]">exp-3-hair-dryer.png</div>
+    <div class="text-white font-bold text-xs mb-1">Dry</div>
+    <div class="text-[10px] text-gray-500">Oven / Heat</div>
   </div>
-  <div v-click class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4 text-center">
+  <div v-click class="text-[#1a4d2a] text-xl">→</div>
+  <div v-click class="flex-1 bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4 text-center relative">
     <div class="w-8 h-8 rounded-full bg-[#4ade80] text-black text-sm font-bold flex items-center justify-center mx-auto mb-3">4</div>
-    <div class="text-white font-bold text-sm mb-2">Weigh Dry</div>
-    <div class="text-gray-400 text-xs">Weigh cooled dry soil → W<sub>dry</sub></div>
-    <div class="mt-3 bg-[#071810] rounded-lg p-2 text-[10px] font-mono text-[#4ade80]">exp-4-dry-weight.png</div>
+    <div class="text-white font-bold text-xs mb-1">Weigh Dry</div>
+    <div class="text-[10px] text-gray-500">Mass W<sub>dry</sub></div>
   </div>
 </div>
 
+</div>
+
+---
+
+<div class="absolute inset-0 bg-[#08200f]" />
+<div class="relative z-10 h-full flex flex-col justify-center px-12">
+<h2 class="text-[#4ade80] text-sm font-mono mb-2">STEP 1</h2>
+<h1 class="text-white text-3xl font-bold mb-6">Record Raw Sensor Reading</h1>
+<div class="grid grid-cols-2 gap-8 items-center">
+  <div class="space-y-4">
+    <p class="text-gray-300">Insert the capacitive sensor into the sample soil. Record the mean ADC value from the ESP32.</p>
+    <div class="bg-[#0d2b17] border border-[#4ade80] p-4 rounded-xl font-mono text-[#4ade80]">
+      Mean ADC: 1878.93 (Sample 2)
+    </div>
+  </div>
+  <img src="images/exp-1-sensor-measure.jpg" class="rounded-xl border border-[#1a4d2a] h-64 w-full object-cover" />
+</div>
+</div>
+
+---
+
+<div class="absolute inset-0 bg-[#08200f]" />
+<div class="relative z-10 h-full flex flex-col justify-center px-12">
+<h2 class="text-[#4ade80] text-sm font-mono mb-2">STEP 2</h2>
+<h1 class="text-white text-3xl font-bold mb-6">Initial Wet Weight</h1>
+<div class="grid grid-cols-2 gap-8 items-center">
+  <img src="images/exp-2-wet-weight.jpg" class="rounded-xl border border-[#1a4d2a] h-64 w-full object-cover" />
+  <div class="space-y-4">
+    <p class="text-gray-300">Weigh the soil sample immediately after measurement to capture total water content.</p>
+    <div class="bg-[#0d2b17] border border-[#1a4d2a] p-4 rounded-xl font-mono text-white text-xl">
+      W<sub>wet</sub> = 242.2 g
+    </div>
+  </div>
+</div>
+</div>
+
+---
+
+<div class="absolute inset-0 bg-[#08200f]" />
+<div class="relative z-10 h-full flex flex-col justify-center px-12">
+<h2 class="text-[#4ade80] text-sm font-mono mb-2">STEP 3 & 4</h2>
+<h1 class="text-white text-3xl font-bold mb-6">Drying and Final Weight</h1>
+<div class="grid grid-cols-2 gap-8 items-center">
+  <div class="space-y-4">
+    <p class="text-gray-300">Dry at 110°C until mass is constant. The remaining mass is the solid soil part.</p>
+    <div class="bg-[#0d2b17] border border-[#1a4d2a] p-4 rounded-xl font-mono text-white text-xl">
+      W<sub>dry</sub> = 187.1 g
+    </div>
+  </div>
+  <div class="grid grid-rows-2 gap-2">
+    <img src="images/exp-3-hair-dryer.jpg" class="rounded-lg border border-[#1a4d2a] h-32 w-full object-cover" />
+    <img src="images/exp-4-dry-weight.jpg" class="rounded-lg border border-[#1a4d2a] h-32 w-full object-cover" />
+  </div>
+</div>
 </div>
 
 ---
@@ -849,35 +902,106 @@ Let's put this into practice. We calibrate the ESP32 and sensor by creating our 
 <div class="relative z-10 h-full flex flex-col justify-center px-12">
 
 <h2 class="text-[#4ade80] text-sm font-mono uppercase tracking-widest mb-2">5.2 — Analysis</h2>
-<h1 class="text-white text-3xl font-bold mb-6">Gravimetric Soil Moisture Calculation</h1>
+<h1 class="text-white text-3xl font-bold mb-6">Gravimetric Soil Moisture (GSM)</h1>
 
 <div class="grid grid-cols-2 gap-8 items-center">
-
 <div class="space-y-4">
-  <div v-click class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4">
-    <div class="text-[#4ade80] font-mono text-sm mb-2">GSM Formula</div>
-    <img src="./images/calculation-soil-moisture-1.png" class="w-full object-contain rounded" alt="GSM formula" />
+  <div v-click class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4 text-center">
+    <div class="text-[#4ade80] font-mono text-sm mb-1">Moisture Content Formula:</div>
+    <div class="text-white font-bold">((W<sub>wet</sub> - W<sub>dry</sub>) / W<sub>dry</sub>) &times; 100</div>
   </div>
 
   <div v-click class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4">
-    <div class="text-[#4ade80] font-semibold mb-2">Worked Example:</div>
+    <div class="text-[#4ade80] font-semibold mb-2 text-sm">Worked Example (Sample 2):</div>
     <div class="space-y-1 text-sm text-gray-300">
-      <div class="flex justify-between"><span>W<sub>wet</sub></span><span class="font-mono text-white">212 g</span></div>
-      <div class="flex justify-between"><span>W<sub>dry</sub></span><span class="font-mono text-white">197 g</span></div>
+      <div class="flex justify-between"><span>W<sub>wet</sub></span><span class="font-mono text-white">242.2 g</span></div>
+      <div class="flex justify-between"><span>W<sub>dry</sub></span><span class="font-mono text-white">187.1 g</span></div>
       <div class="border-t border-[#1a4d2a] my-1"></div>
-      <div class="flex justify-between"><span>212 − 197</span><span class="font-mono text-white">15 g</span></div>
-      <div class="flex justify-between"><span>15 ÷ 197</span><span class="font-mono text-white">0.076</span></div>
-      <div class="flex justify-between"><span>× 100</span><span class="font-mono text-[#4ade80] font-bold">7.6 %</span></div>
+      <div class="flex justify-between"><span>Water Mass (Difference)</span><span class="font-mono text-white">55.1 g</span></div>
+      <div class="flex justify-between text-[#4ade80] font-bold"><span>GSM Percentage</span><span>29.45 %</span></div>
     </div>
   </div>
 </div>
 
 <div v-click>
-  <img src="./images/calculation-soil-moisture-2.png" class="rounded-xl border border-[#1a4d2a] w-full object-contain" alt="GSM calculation example" />
+  <img src="images/calculation-soil-moisture-2.png" class="rounded-xl border border-[#1a4d2a] w-full max-h-64 object-contain" />
+</div>
+</div>
 </div>
 
+---
+
+<div class="absolute inset-0 bg-[#08200f]" />
+
+<div class="relative z-10 h-full flex flex-col justify-center px-12 py-6">
+
+  <h2 class="text-[#4ade80] text-sm font-mono uppercase tracking-widest mb-1">5.2 — Data Collection</h2>
+  <h1 class="text-white text-4xl font-bold mb-8">Experimental Dataset</h1>
+
+  <div class="grid grid-cols-12 gap-8 items-start relative h-full">
+    <div class="col-span-5 space-y-6">
+      <div v-click class="space-y-4">
+        <div class="bg-[#0d2b17] border-2 border-[#1a4d2a] rounded-xl p-5 shadow-lg">
+          <div class="text-white text-2xl font-bold mb-4 flex items-center gap-3">
+            <span class="text-[#4ade80] text-3xl">📊</span> Dataset Depth
+          </div>
+          <ul class="text-gray-300 text-base space-y-3 list-disc list-inside leading-relaxed">
+            <li><b>7 Samples:</b> Exceeding minimum requirement.</li>
+            <li><b>Wide Range:</b> Moisture spans <b>14.0%</b> to <b>75.1%</b>.</li>
+          </ul>
+        </div>
+        <div class="bg-[#0d2b17] border-2 border-[#4ade80]/30 rounded-xl p-5 shadow-lg">
+          <div class="text-white text-lg font-bold mb-2 flex items-center gap-2">
+            <span class="text-[#4ade80]">🧪</span> Scientific Rigor
+          </div>
+          <p class="text-gray-400 text-xs leading-relaxed">
+            Moisture sensors are sensitive to <b>air gaps</b> and <b>density</b>. Multi-point averaging filters out environmental noise, ensuring the curve represents <b>actual moisture</b>, not placement luck.
+          </p>
+        </div>
+      </div>
+      <div v-click class="bg-[#0d2b17] border-2 border-[#1a4d2a] rounded-xl p-5 shadow-lg">
+        <div class="text-white text-2xl font-bold mb-4 flex items-center gap-3">
+          <span class="text-[#4ade80] text-3xl">⏱️</span> Measurement Protocol
+        </div>
+        <p class="text-gray-300 text-base leading-relaxed">
+          Recorded <b>6 positions</b> per sample. Each measurement waits for <b>>5 stable input values</b> before logging mean.
+        </p>
+      </div>
+    </div>
+    <div class="col-span-7 relative h-full">
+      <div v-click="1" class="bg-[#0d2b17] border-2 border-[#1a4d2a] rounded-xl overflow-hidden shadow-xl">
+        <table class="w-full text-[13px] text-left text-gray-200">
+          <thead class="bg-[#1a4d2a] text-[#4ade80] uppercase tracking-wider">
+            <tr>
+              <th class="p-2.5">Sample</th>
+              <th class="p-2.5 text-center">Mean ADC</th>
+              <th class="p-2.5 text-center">Std Dev</th>
+              <th class="p-2.5 text-center">GSM %</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y-2 divide-[#1a4d2a]">
+            <tr><td class="p-2.5 font-bold text-white">1st</td><td class="p-2.5 text-center">1781.2</td><td class="p-2.5 text-center text-gray-400">362.7</td><td class="p-2.5 text-center font-bold text-[#4ade80]">41.1%</td></tr>
+            <tr class="bg-[#0d2b17]"><td class="p-2.5 font-bold text-white">2nd</td><td class="p-2.5 text-center">1878.9</td><td class="p-2.5 text-center text-gray-400">354.7</td><td class="p-2.5 text-center font-bold text-[#4ade80]">29.4%</td></tr>
+            <tr><td class="p-2.5 font-bold text-white">3rd</td><td class="p-2.5 text-center">2092.2</td><td class="p-2.5 text-center text-gray-400">564.7</td><td class="p-2.5 text-center font-bold text-[#4ade80]">14.0%</td></tr>
+            <tr class="bg-[#0d2b17]"><td class="p-2.5 font-bold text-white">4th</td><td class="p-2.5 text-center">1176.6</td><td class="p-2.5 text-center text-gray-400">319.5</td><td class="p-2.5 text-center font-bold text-[#4ade80]">50.1%</td></tr>
+            <tr><td class="p-2.5 font-bold text-white">5th</td><td class="p-2.5 text-center">1855.0</td><td class="p-2.5 text-center text-gray-400">378.0</td><td class="p-2.5 text-center font-bold text-[#4ade80]">18.2%</td></tr>
+            <tr class="bg-[#0d2b17]"><td class="p-2.5 font-bold text-white">6th</td><td class="p-2.5 text-center">998.0</td><td class="p-2.5 text-center text-gray-400">147.8</td><td class="p-2.5 text-center font-bold text-[#4ade80]">75.1%</td></tr>
+            <tr><td class="p-2.5 font-bold text-white">7th</td><td class="p-2.5 text-center">829.0</td><td class="p-2.5 text-center text-gray-400">115.2</td><td class="p-2.5 text-center font-bold text-[#4ade80]">62.4%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
 </div>
 
+<div v-click="2" class="fixed inset-0 z-50 bg-[#08200f]/98 flex flex-col items-center justify-center p-12">
+  <div class="bg-white rounded-3xl p-8 border-4 border-[#4ade80] shadow-2xl flex flex-col items-center max-w-5xl">
+    <img src="images/data-plot.png" class="max-h-[70vh] w-auto object-contain" />
+    <div class="mt-6 text-center text-lg text-gray-700 font-bold px-6 py-3 bg-gray-100 rounded-xl border border-gray-300">
+      Point size = W<sub>wet</sub> | Error bars = &plusmn; Standard Deviation
+    </div>
+  </div>
 </div>
 
 ---
@@ -886,32 +1010,119 @@ Let's put this into practice. We calibrate the ESP32 and sensor by creating our 
 
 <div class="relative z-10 h-full flex flex-col justify-center px-12">
 
-<h2 class="text-[#4ade80] text-sm font-mono uppercase tracking-widest mb-2">5.2 — The Calibration Curve</h2>
+<h2 class="text-[#4ade80] text-sm font-mono uppercase tracking-widest mb-2">5.3 — The Calibration Curve</h2>
 <h1 class="text-white text-3xl font-bold mb-6">Plotting the Fitted Line</h1>
 
 <div class="grid grid-cols-2 gap-8 items-center">
-
 <div class="space-y-4">
   <p class="text-gray-300 text-sm leading-relaxed" v-click>
-    Once we have ≥ 3 data points (raw sensor reading → calculated moisture %), we plot them on a graph and draw a <span class="text-[#4ade80] font-semibold">line of best fit</span>.
+    Mapping the raw ADC mean (1878.9) to the calculated GSM (29.45%). Repeating this for all 7 samples creates our curve.
   </p>
   <div v-click class="bg-gradient-to-r from-[#14532d] to-[#0d2b17] border border-[#4ade80] rounded-xl p-4">
     <div class="font-mono text-center text-lg text-white">
-      moisture<span class="text-[#4ade80]">%</span> = <span class="text-[#4ade80]">m</span> × reading + <span class="text-[#4ade80]">b</span>
+      Moisture % = <b>m</b>(ADC) + <b>b</b>
     </div>
-    <div class="text-center text-gray-400 text-xs mt-2">Slope and intercept from least-squares fit</div>
-  </div>
-  <div v-click class="p-3 border-l-4 border-[#4ade80] bg-[#14532d]/30 text-sm text-gray-300">
-    And that's our calibration curve! The ESP32 can now take a raw reading, apply this equation, and <b class="text-white">instantly convert it</b> into a scientifically accurate moisture percentage.
   </div>
 </div>
 
 <div v-click>
-  <img src="./images/regression.gif" class="rounded-xl border border-[#1a4d2a] w-full object-contain bg-white p-2" alt="Regression calibration curve" />
-  <div class="text-xs text-gray-500 mt-2 text-center">Sensor Reading vs. Moisture % with best-fit line</div>
+  <img src="images/regression.gif" class="rounded-xl border border-[#1a4d2a] w-full object-contain bg-white p-2" />
+  <div class="text-xs text-gray-500 mt-2 text-center">Linear regression of our 7 samples</div>
+</div>
+</div>
 </div>
 
+---
+
+<div class="absolute inset-0 bg-[#08200f]" />
+
+<div class="relative z-10 h-full flex flex-col items-start px-12 pt-8 pb-4">
+
+  <header class="w-full">
+    <h2 class="text-[#4ade80] text-sm font-mono uppercase tracking-widest mb-0">5.4 — Final Model</h2>
+    <h1 class="text-white text-3xl font-bold mb-2">Optimized Calibration Model</h1>
+  </header>
+
+  <div class="grid grid-cols-12 gap-8 items-start w-full h-auto">
+    <div v-click class="col-span-8 bg-white rounded-2xl p-3 border-4 border-[#4ade80] shadow-[0_0_30px_rgba(74,222,128,0.15)]">
+      <img src="images/regression.gif" class="w-full max-h-[72vh] object-contain rounded-lg" alt="Linear Regression Animation" />
+    </div>
+    <div class="col-span-4 space-y-4 pt-2">
+      <div v-click class="bg-[#0d2b17] border-l-4 border-[#4ade80] p-4 rounded-r-xl">
+        <h3 class="text-white font-bold text-lg mb-1">Fitted Equation</h3>
+        <p class="text-[#4ade80] font-mono text-[13px] leading-tight">
+          y = -0.0418x + 104.85
+        </p>
+        <p class="text-gray-400 text-[11px] mt-2 italic leading-relaxed">
+          The negative slope confirms that higher ADC values (dryer soil) correctly correlate to lower moisture percentages.
+        </p>
+      </div>
+      <div v-click class="bg-[#0d2b17]/50 border border-[#1a4d2a] p-4 rounded-xl">
+        <h4 class="text-[#4ade80] text-[10px] font-mono uppercase mb-1">Firmware Constants</h4>
+        <div class="space-y-2 text-[10px] font-mono text-gray-300">
+          <div class="flex justify-between">
+            <span>Slope (m):</span>
+            <span class="text-white">-0.041796...</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Intercept (b):</span>
+            <span class="text-white">104.8499...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
+---
+
+<div class="absolute inset-0 bg-[#08200f]" />
+
+<div class="relative z-10 h-full flex flex-col px-12 py-10">
+
+  <h2 class="text-[#4ade80] text-sm font-mono uppercase tracking-widest mb-1">5.5 — Scientific Insight</h2>
+  <h1 class="text-white text-3xl font-bold mb-6">Physical Meaning of Parameters</h1>
+
+  <div class="grid grid-cols-2 gap-10 items-start">
+    <div v-click class="space-y-4">
+      <div class="bg-[#14532d]/20 border-l-4 border-[#4ade80] p-6 rounded-r-xl shadow-lg">
+        <h3 class="text-white font-bold text-xl mb-3">Is 105% Moisture Possible?</h3>
+        <p class="text-gray-300 text-sm leading-relaxed">
+          <b>Yes.</b> Gravimetric moisture compares water mass to <span class="text-white font-semibold">dry soil mass</span>. 
+        </p>
+        <div class="mt-4 p-3 bg-[#0d2b17] rounded-lg border border-[#1a4d2a] font-mono text-xs text-[#4ade80]">
+          GSM % = (Mass<sub>water</sub> / Mass<sub>dry soil</sub>) × 100
+        </div>
+      </div>
+    </div>
+    <div v-click class="space-y-4">
+      <div class="bg-[#0d2b17] border-2 border-[#1a4d2a] p-5 rounded-xl">
+        <div class="flex items-center gap-3 mb-2">
+          <div class="bg-[#4ade80] text-black font-mono font-bold px-2 py-0.5 rounded">m</div>
+          <span class="text-white font-bold">Slope: -0.0418</span>
+        </div>
+        <p class="text-gray-400 text-xs leading-relaxed">
+          For every <b>100 units</b> the ADC value increases (dryer soil), the Moisture drops by <b>4.18%</b>. The negative value proves a <b>inverse</b> correlation between voltage and wetness.
+        </p>
+      </div>
+      <div class="bg-[#0d2b17] border-2 border-[#1a4d2a] p-5 rounded-xl">
+        <div class="flex items-center gap-3 mb-2">
+          <div class="bg-[#4ade80] text-black font-mono font-bold px-2 py-0.5 rounded">b</div>
+          <span class="text-white font-bold">Intercept: 104.85</span>
+        </div>
+        <p class="text-gray-400 text-xs leading-relaxed">
+          This is the <b>saturation anchor</b>. It predicts that at a theoretical ADC of 0, the soil reaches its maximum measurable capacity of ~105% GWC.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <div v-click class="mt-auto bg-[#0d2b17]/50 border border-[#1a4d2a] p-4 rounded-xl text-center">
+    <p class="text-gray-400 text-sm italic">
+      "Our parameters aren't just numbers—they are the <b>fingerprint</b> of VGU soil's electrical and physical properties."
+    </p>
+  </div>
 
 </div>
 
