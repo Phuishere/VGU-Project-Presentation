@@ -85,9 +85,9 @@ class: text-center
   </div>
 </div>
 
-<div v-click class="rounded-2xl overflow-hidden border-2 border-[#2d7a40] bg-[#0d2b17] flex flex-col items-center justify-center aspect-video">
+<div v-click class="rounded-2xl overflow-hidden border-2 border-[#2d7a40] bg-[#0d2b17] flex flex-col items-center justify-center aspect-square">
   <div class="text-6xl mb-4 animate-pulse">🌿</div>
-  <div class="text-sm font-mono text-[#4ade80]">watering-vgu.png</div>
+  <img src="images/watering-vgu.jpg" alt="VGU Campus Watering System" class="max-w-full h-auto" />
   <div class="text-xs mt-2 text-gray-400">VGU Campus Watering System</div>
 </div>
 
@@ -128,8 +128,12 @@ This is the "why" slide. IoT devices remove guesswork from irrigation — precis
   </div>
 </div>
 
-<div v-click>
-  <img src="./images/soil-moisture-intro.png" class="rounded-xl border border-[#1a4d2a] w-full object-contain" alt="Soil moisture introduction" />
+<div v-click class="w-full flex justify-center">
+  <img 
+    src="./images/soil-moisture-intro.png" 
+    class="w-full max-w-[1800px] h-auto rounded-xl border-2 border-[#1a4d2a] shadow-2xl" 
+    alt="Soil moisture introduction" 
+  />
 </div>
 
 </div>
@@ -252,9 +256,18 @@ Through these fundamental methods: GPIO, I2C, UART, SPI, Wireless. Next, we look
 <div class="grid grid-cols-2 gap-8 items-center">
 
 <div class="space-y-4">
-  <p class="text-gray-300 text-sm leading-relaxed" v-click>
-    GPIO stands for <span class="text-[#4ade80] font-semibold">General Purpose Input/Output</span>. These are the standard pins on your microcontroller — the basic building blocks. They can be programmed as either digital or analog pins.
-  </p>
+  <div class="space-y-3">
+    <p class="text-gray-300 text-sm" v-click>
+      <b class="text-[#4ade80]">GPIO:</b> General Purpose Input/Output. Programmable pins used as digital or analog building blocks.
+    </p>
+    <div v-click class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-3 text-sm">
+      <div class="text-white font-bold mb-1">Digital GPIO (Binary)</div>
+      <ul class="text-gray-400 list-disc list-inside">
+        <li><b class="text-white">Input:</b> Read state (e.g., button press)</li>
+        <li><b class="text-white">Output:</b> Set state (e.g., LED control)</li>
+      </ul>
+    </div>
+  </div>
   <div v-click class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4">
     <div class="text-white font-bold mb-2">Digital GPIO — Binary States</div>
     <div class="text-gray-400 text-sm space-y-2">
@@ -296,7 +309,7 @@ Digital pins work in binary: HIGH or LOW. Think of a button press (input) or tur
     </div>
     <div class="text-gray-300 text-sm space-y-2">
       <div>Unlike digital, analog pins deal with <span class="text-[#4ade80]">continuous voltage ranges</span> (0 to 3.3V or 5V).</div>
-      <div><b class="text-white">Input (ADC):</b> Translates incoming voltage into a 10-bit number (0–1023) the computer can read.</div>
+      <div><b class="text-white">Input (ADC):</b> Translates incoming voltage into a N-bit number that the computer can read - such as 10-bit (0–1023), 12-bit (0–4095), etc.</div>
       <div><b class="text-white">Output (DAC):</b> Converts a digital number back into a physical voltage output.</div>
     </div>
   </div>
@@ -536,46 +549,49 @@ class: text-center
 
 <div class="absolute inset-0 bg-[#08200f]" />
 
-<div class="relative z-10 h-full flex flex-col justify-center px-12">
+<div class="relative z-10 h-full flex flex-col justify-center px-12 py-10">
 
 <h2 class="text-[#4ade80] text-sm font-mono uppercase tracking-widest mb-2">3.1 — The Problem</h2>
-<h1 class="text-white text-3xl font-bold mb-6">Why We Need Calibration</h1>
+<h1 class="text-white text-3xl font-bold mb-8">Why We Need Calibration</h1>
 
-<div class="grid grid-cols-2 gap-8">
-
-<div class="space-y-4">
-  <div v-click class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4">
-    <div class="text-white font-bold mb-2">⚡ Sensors speak in electricity</div>
-    <div class="text-gray-400 text-sm">They detect raw electrical signals — resistance, voltage, capacitance — not human-readable units.</div>
-  </div>
-  <div v-click class="bg-red-900/20 border border-red-800/40 rounded-xl p-4">
-    <div class="text-red-400 font-bold mb-2">❌ The Problem</div>
-    <div class="text-gray-300 text-sm">Imagine a temperature sensor giving you <span class="font-mono text-red-400">22.5 KΩ</span> instead of <span class="font-mono text-[#4ade80]">25°C</span>!</div>
-  </div>
-  <div v-click class="bg-[#14532d]/30 border border-[#4ade80] rounded-xl p-4">
-    <div class="text-[#4ade80] font-bold mb-2">✓ The Solution</div>
-    <div class="text-gray-300 text-sm">Calibration maps raw electrical readings to correct, understandable units through measurement and math.</div>
-  </div>
-</div>
-
-<div class="space-y-4">
-  <div v-click class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4">
-    <div class="text-white font-bold mb-3">Two Approaches:</div>
-    <div class="space-y-3 text-sm text-gray-300">
-      <div class="flex gap-3 items-start">
-        <span class="text-[#4ade80] font-bold">1.</span>
-        <div><b class="text-white">"Good Enough" — Relative Threshold</b><br>Find the raw value (e.g. 600/1023) meaning "dry" for your plant and use it as trigger. No lab needed.</div>
+<div class="grid grid-cols-2 gap-8 items-stretch">
+    <div class="space-y-4 flex flex-col">
+      <div v-click class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4 flex-1">
+        <div class="text-white font-bold mb-2 text-base">⚡ Sensors speak in electricity</div>
+        <div class="text-gray-400 text-sm leading-relaxed">They detect raw electrical signals — resistance, voltage, capacitance — not human-readable units.</div>
       </div>
-      <div class="flex gap-3 items-start">
-        <span class="text-[#4ade80] font-bold">2.</span>
-        <div><b class="text-white">Scientific — Absolute Calibration</b><br>Map voltage to Gravimetric/Volumetric moisture via lab samples. Required for precise data logging.</div>
+      <div v-click class="bg-red-900/10 border border-red-800/40 rounded-xl p-4">
+        <div class="text-red-400 font-bold mb-2 text-base">❌ The Problem</div>
+        <div class="text-gray-300 text-sm">Imagine a temperature sensor giving you <span class="font-mono text-red-400">22.5 KΩ</span> instead of <span class="font-mono text-[#4ade80]">25°C</span>!</div>
+      </div>   
+      <div v-click class="bg-[#14532d]/20 border border-[#4ade80]/50 rounded-xl p-4">
+        <div class="text-[#4ade80] font-bold mb-2 text-base">✓ The Solution</div>
+        <div class="text-gray-300 text-sm">Calibration maps raw electrical readings to correct, understandable units through measurement and math.</div>
+      </div>
+    </div>
+    <div v-click class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-6 flex flex-col h-full">
+      <div class="text-white font-bold mb-6 text-lg border-b border-[#1a4d2a] pb-2">Two Approaches:</div>     
+      <div class="space-y-8 flex-grow flex flex-col justify-center">
+        <div class="flex gap-4 items-start">
+          <span class="text-[#4ade80] font-mono font-bold text-xl">01</span>
+          <div>
+            <b class="text-white text-base">"Good Enough" — Relative Threshold</b>
+            <p class="text-gray-400 text-sm mt-1 leading-relaxed">Find the raw value (e.g. 600/4095) meaning "dry" for your plant and use it as trigger. No lab needed.</p>
+          </div>
+        </div>
+        <div class="flex gap-4 items-start">
+          <span class="text-[#4ade80] font-mono font-bold text-xl">02</span>
+          <div>
+            <b class="text-white text-base">Scientific — Absolute Calibration</b>
+            <p class="text-gray-400 text-sm mt-1 leading-relaxed">Map voltage to Gravimetric/Volumetric moisture via lab samples. Required for precise data logging.</p>
+          </div>
+        </div>
+      </div>
+      <div class="mt-auto pt-4 text-[10px] text-gray-600 uppercase tracking-tighter">
+        Standard Microcontroller Procedure
       </div>
     </div>
   </div>
-</div>
-
-</div>
-
 </div>
 
 ---
@@ -648,7 +664,7 @@ class: text-center
 <div class="relative z-10 h-full flex flex-col justify-center px-12">
 
 <h2 class="text-[#4ade80] text-sm font-mono uppercase tracking-widest mb-2">4.1 — Microcontroller</h2>
-<h1 class="text-white text-3xl font-bold mb-6">ESP32 NodeMCU-32S</h1>
+<h1 class="text-white text-3xl font-bold mb-6">ESP32</h1>
 
 <div class="grid grid-cols-2 gap-8 items-center">
 
@@ -690,30 +706,29 @@ The ESP32 plays a central role: collecting sensor data, processing it, and enabl
 <div class="relative z-10 h-full flex flex-col justify-center px-12">
 
 <h2 class="text-[#4ade80] text-sm font-mono uppercase tracking-widest mb-2">4.2 — Soil Moisture Sensors</h2>
-<h1 class="text-white text-3xl font-bold mb-6">Resistive vs Capacitive</h1>
+<h1 class="text-white text-3xl font-bold mb-6">Resistive</h1>
 
-<div class="grid grid-cols-2 gap-8 items-start">
+<div class="grid grid-cols-2 gap-8 items-center">
 
-<div class="space-y-4">
-  <div v-click class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4">
-    <div class="text-white font-bold text-lg mb-2">⚡ Resistive Sensor</div>
-    <div class="text-gray-300 text-sm leading-relaxed">Two metal probes in soil. Measures how much current passes between them. Water conducts electricity — <span class="text-white">wetter soil = lower resistance</span>.</div>
-    <div class="mt-2 text-xs text-red-400">⚠ Corrodes over time due to electrolysis</div>
+  <div class="space-y-4">
+    <div v-click class="bg-[#0d2b17] border border-[#4ade80] rounded-xl p-4 ring-1 ring-[#4ade80]/30">
+      <div class="text-[#4ade80] font-bold text-lg mb-2">⚡ Resistive Sensor <span class="text-xs bg-[#14532d] px-2 py-0.5 rounded-full ml-1 text-[#4ade80]">Our Choice</span></div>
+      <div class="text-gray-300 text-sm leading-relaxed">
+        Two metal probes in soil. Measures how much current passes between them. 
+        Water conducts electricity — <span class="text-white font-medium">wetter soil = lower resistance</span>.
+      </div>
+      <div class="mt-2 text-xs text-red-400">
+        ⚠ Corrodes over time due to electrolysis
+      </div>
+    </div>
   </div>
-  <div v-click class="bg-[#0d2b17] border border-[#4ade80] rounded-xl p-4 ring-1 ring-[#4ade80]/30">
-    <div class="text-[#4ade80] font-bold text-lg mb-2">🌊 Capacitive Sensor <span class="text-xs bg-[#14532d] px-2 py-0.5 rounded-full ml-1">Our Choice</span></div>
-    <div class="text-gray-300 text-sm leading-relaxed">Measures electric charge storage across two plates. Wetter soil → higher capacitance → lower output voltage. Analog output: read by ADC.</div>
-    <div class="mt-2 text-xs text-[#4ade80]">✓ No corrosion · Long lifespan · Stable readings</div>
-  </div>
-</div>
 
-<div v-click class="space-y-4">
-  <img src="./images/fc28-moisture-detection.jpg" class="rounded-xl border border-[#1a4d2a] w-full h-52 object-cover" alt="FC-28 sensor" />
-  <div class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-3 text-sm text-gray-300 text-center">
-    <span class="text-white font-semibold">FC-28 Sensor</span> — Analog voltage output, read via ESP32 ADC pin
+  <div v-click class="space-y-4">
+    <img src="./images/fc28-moisture-detection.jpg" class="rounded-xl border border-[#1a4d2a] w-full h-52 object-cover" alt="FC-28 sensor" />
+    <div class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-3 text-sm text-gray-300 text-center">
+      <span class="text-white font-semibold">FC-28 Sensor</span> — Analog voltage output, read via ESP32 ADC pin
+    </div>
   </div>
-</div>
-
 </div>
 
 </div>
@@ -724,11 +739,29 @@ The ESP32 plays a central role: collecting sensor data, processing it, and enabl
 
 <div class="relative z-10 h-full flex flex-col justify-center px-12">
 
-<h2 class="text-[#4ade80] text-sm font-mono uppercase tracking-widest mb-2">4.3 — Wiring</h2>
-<h1 class="text-white text-3xl font-bold mb-6">Overall Architecture</h1>
+<h2 class="text-[#4ade80] text-sm font-mono uppercase tracking-widest mb-2">4.3 — Soil Moisture Sensors</h2>
+<h1 class="text-white text-3xl font-bold mb-6">Capacitive</h1>
 
-<div class="flex justify-center">
-  <img src="./images/circuit-board-graph.jpg" class="rounded-xl border border-[#1a4d2a] max-h-80 object-contain" alt="Circuit diagram" />
+<div class="grid grid-cols-2 gap-8 items-center">
+
+  <div class="space-y-4">
+    <div v-click class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-4">
+      <div class="text-white font-bold text-lg mb-2">🌊 Capacitive Sensor</div>
+      <div class="text-gray-300 text-sm leading-relaxed">
+        Measures the soil's ability to store electrical charge. Acts as a capacitor where the soil is the dielectric—<span class="text-white font-medium">wetter soil = higher capacitance</span>.
+      </div>
+      <div class="mt-2 text-xs text-[#4ade80]">
+        ✓ No exposed metal · Corrosion-free · Extended lifespan
+      </div>
+    </div>
+  </div>
+
+  <div v-click class="space-y-4 flex flex-col items-center">
+    <img src="./images/capacitive-moisture-sensor.jpg" class="rounded-xl border border-[#1a4d2a] w-full max-h-52 object-contain" alt="Capacitive sensor" />
+    <div class="bg-[#0d2b17] border border-[#1a4d2a] rounded-xl p-3 text-sm text-gray-300 text-center w-full">
+      <span class="text-white font-semibold">Corrosion-Resistant</span> — Integrated circuit converts capacitance to voltage
+    </div>
+  </div>
 </div>
 
 </div>
@@ -753,6 +786,21 @@ class: text-center
 <!--
 Let's put this into practice. We calibrate the ESP32 and sensor by creating our own fitted curve from real soil samples.
 -->
+
+---
+
+<div class="absolute inset-0 bg-[#08200f]" />
+
+<div class="relative z-10 h-full flex flex-col justify-center px-12">
+
+<h2 class="text-[#4ade80] text-sm font-mono uppercase tracking-widest mb-2">5.1 — Wiring</h2>
+<h1 class="text-white text-3xl font-bold mb-6">Overall Architecture</h1>
+
+<div class="flex justify-center">
+  <img src="./images/circuit-board-graph.jpg" class="rounded-xl border border-[#1a4d2a] max-h-80 object-contain" alt="Circuit diagram" />
+</div>
+
+</div>
 
 ---
 
@@ -859,7 +907,7 @@ Let's put this into practice. We calibrate the ESP32 and sensor by creating our 
 </div>
 
 <div v-click>
-  <img src="./images/regression.png" class="rounded-xl border border-[#1a4d2a] w-full object-contain bg-white p-2" alt="Regression calibration curve" />
+  <img src="./images/regression.gif" class="rounded-xl border border-[#1a4d2a] w-full object-contain bg-white p-2" alt="Regression calibration curve" />
   <div class="text-xs text-gray-500 mt-2 text-center">Sensor Reading vs. Moisture % with best-fit line</div>
 </div>
 
