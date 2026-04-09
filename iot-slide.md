@@ -683,7 +683,7 @@ class: text-center
     </div>
   </div>
   <div v-click class="p-3 border-l-4 border-[#4ade80] bg-[#14532d]/30 text-sm text-gray-300">
-    We chose ESP32 because its built-in ADC lets us read soil moisture sensors <b class="text-white">without additional hardware</b>.
+    We chose ESP32 because its built-in ADC lets us read soil moisture sensors.
   </div>
 </div>
 
