@@ -79,7 +79,7 @@ class: text-center
     Our project deploys <span class="text-[#4ade80] font-semibold">ESP32-based soil moisture sensors</span> across VGU campus to measure, calibrate, and infer real soil water content — enabling intelligent, data-driven watering decisions.
   </p>
   <div class="flex gap-3 mt-4 flex-wrap" v-click>
-    <span class="bg-[#14532d] text-[#4ade80] px-3 py-1 rounded-full text-sm border border-[#2d7a40]">🌱 Capacitive Sensor</span>
+    <span class="bg-[#14532d] text-[#4ade80] px-3 py-1 rounded-full text-sm border border-[#2d7a40]">🌱 Resistive Sensor</span>
     <span class="bg-[#14532d] text-[#4ade80] px-3 py-1 rounded-full text-sm border border-[#2d7a40]">🔌 ESP32</span>
     <span class="bg-[#14532d] text-[#4ade80] px-3 py-1 rounded-full text-sm border border-[#2d7a40]">📊 Linear Regression</span>
   </div>
@@ -849,7 +849,7 @@ Let's put this into practice. We calibrate the ESP32 and sensor by creating our 
 <h1 class="text-white text-3xl font-bold mb-6">Record Raw Sensor Reading</h1>
 <div class="grid grid-cols-2 gap-8 items-center">
   <div class="space-y-4">
-    <p class="text-gray-300">Insert the capacitive sensor into the sample soil. Record the mean ADC value from the ESP32.</p>
+    <p class="text-gray-300">Insert the sensor into the sample soil. Record the mean ADC value from the ESP32.</p>
     <div class="bg-[#0d2b17] border border-[#4ade80] p-4 rounded-xl font-mono text-[#4ade80]">
       Mean ADC: 1878.93 (Sample 2)
     </div>
@@ -1155,7 +1155,7 @@ Let's put this into practice. We calibrate the ESP32 and sensor by creating our 
   <div v-click class="bg-[#0d2b17]/80 border border-[#1a4d2a] rounded-2xl p-4">
     <div class="text-3xl mb-3">⚙️</div>
     <div class="text-[#4ade80] font-bold text-sm mb-1">Hardware</div>
-    <div class="text-gray-400 text-xs">ESP32 + capacitive sensor</div>
+    <div class="text-gray-400 text-xs">ESP32 + Resistive sensor</div>
   </div>
   <div v-click class="bg-[#0d2b17]/80 border border-[#1a4d2a] rounded-2xl p-4">
     <div class="text-3xl mb-3">🧪</div>
