@@ -630,10 +630,6 @@ class: text-center
     <div class="font-mono text-lg text-white">moisture<span class="text-[#4ade80]">%</span> = m × voltage + b</div>
     <div class="text-gray-500 text-xs mt-2">The fitted curve lets code convert any new reading instantly</div>
   </div>
-  <div class="text-gray-400 text-xs text-center">
-    💡 For <b>capacitive</b> sensors: voltage ↓ as moisture ↑ (negative slope)<br>
-    💡 For <b>resistive</b> sensors: voltage ↑ as moisture ↑ (positive slope)
-  </div>
 </div>
 
 </div>
